@@ -15,6 +15,8 @@ class _HomeState extends State<Home> {
   TextEditingController weightController = TextEditingController();
   TextEditingController heightController = TextEditingController();
 
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   bool showImc = false;
 
   void _resetFields() {
@@ -23,13 +25,16 @@ class _HomeState extends State<Home> {
 
     setState(() {
       showImc = false;
+      _formKey = GlobalKey<FormState>();
     });
   }
 
   void _showImc() {
-    setState(() {
-      showImc = true;
-    });
+    if (_formKey.currentState.validate()) {
+      setState(() {
+        showImc = true;
+      }); 
+    }
   }
 
   double _calculate() {
@@ -58,6 +63,12 @@ class _HomeState extends State<Home> {
     }
   }
 
+  String _validator (value, sentence) {
+    if (value.isEmpty) return sentence;
+
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,15 +76,28 @@ class _HomeState extends State<Home> {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            UserIcon(),
-            Input(TextInputType.number, 'Weight (KG)', weightController),
-            Input(TextInputType.number, 'Height (CM)', heightController),
-            Button(this._showImc),
-            Result(this.showImc ? this._getLabel() : '...')
-          ],
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              UserIcon(),
+              Input(
+                TextInputType.number, 
+                'Weight (KG)', 
+                weightController,
+                (value) => this._validator(value, 'Weight is required')
+              ),
+              Input(
+                TextInputType.number, 
+                'Height (CM)', 
+                heightController,
+                (value) => this._validator(value, 'Height is required')
+              ),
+              Button(this._showImc),
+              Result(this.showImc ? this._getLabel() : '...')
+            ],
+          ),
         )
       )
     );
