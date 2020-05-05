@@ -4,8 +4,9 @@ import 'package:flutter/widgets.dart';
 class Input extends StatelessWidget {
   final TextInputType type;
   final String labelText;
+  final TextEditingController controller;
 
-  Input(this.type, this.labelText);
+  Input(this.type, this.labelText, this.controller);
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +23,7 @@ class Input extends StatelessWidget {
         color: Colors.green,
         fontSize: 25
       ),
+      controller: controller,
     );
   }
 }
